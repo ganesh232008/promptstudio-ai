@@ -4,8 +4,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from backend.agents.manager import process_request
-from backend.chat_memory import get_history, save_message
+from agents.manager import process_request
+from chat_memory import get_history, save_message
 
 app = FastAPI(
     title="PromptForge AI",
