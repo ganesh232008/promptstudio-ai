@@ -10,41 +10,54 @@ from chat_memory import get_history, save_message
 app = FastAPI(
     title="PromptForge AI",
     description="Multi-Agent Prompt Engineering Assistant",
-    version="1.0.0"
+    version="1.0.0",
 )
 
-# Allow React frontend
+# ============================================
+# CORS Configuration
+# ============================================
+
+origins = [
+    "http://localhost:5173",              # Local React
+    "https://promptstudio-ai.web.app",    # Firebase Frontend
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-# ---------------- Existing Prompt Request ----------------
+# ============================================
+# Request Models
+# ============================================
 
 class PromptRequest(BaseModel):
     idea: str
 
-
-# ---------------- New Chat Request ----------------
 
 class ChatRequest(BaseModel):
     session_id: str | None = None
     message: str
 
 
+# ============================================
+# Home Route
+# ============================================
+
 @app.get("/")
 def home():
     return {
         "message": "Welcome to PromptForge AI 🚀",
-        "status": "Running Successfully"
+        "status": "Running Successfully",
     }
 
 
-# ---------------- Existing Endpoint ----------------
+# ============================================
+# Generate Prompt Endpoint
+# ============================================
 
 @app.post("/generate")
 def create_prompt(request: PromptRequest):
@@ -54,7 +67,9 @@ def create_prompt(request: PromptRequest):
     }
 
 
-# ---------------- New Chat Endpoint ----------------
+# ============================================
+# Chat Endpoint
+# ============================================
 
 @app.post("/chat")
 def chat(request: ChatRequest):
@@ -71,5 +86,5 @@ def chat(request: ChatRequest):
 
     return {
         "session_id": session_id,
-        "reply": reply
+        "reply": reply,
     }
