@@ -1,4 +1,5 @@
 from uuid import uuid4
+import traceback
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,8 +19,8 @@ app = FastAPI(
 # ============================================
 
 origins = [
-    "http://localhost:5173",              # Local React
-    "https://promptstudio-ai.web.app",    # Firebase Frontend
+    "http://localhost:5173",
+    "https://promptstudio-ai.web.app",
 ]
 
 app.add_middleware(
@@ -61,10 +62,17 @@ def home():
 
 @app.post("/generate")
 def create_prompt(request: PromptRequest):
-    result = process_request(request.idea)
-    return {
-        "generated_prompt": result
-    }
+    try:
+        result = process_request(request.idea)
+        return {
+            "generated_prompt": result
+        }
+
+    except Exception as e:
+        print(traceback.format_exc())
+        return {
+            "error": str(e)
+        }
 
 
 # ============================================
@@ -74,17 +82,26 @@ def create_prompt(request: PromptRequest):
 @app.post("/chat")
 def chat(request: ChatRequest):
 
-    session_id = request.session_id or str(uuid4())
+    try:
+        session_id = request.session_id or str(uuid4())
 
-    save_message(session_id, "user", request.message)
+        save_message(session_id, "user", request.message)
 
-    history = get_history(session_id)
+        history = get_history(session_id)
 
-    reply = process_request(session_id, history)
+        reply = process_request(session_id, history)
 
-    save_message(session_id, "assistant", reply)
+        save_message(session_id, "assistant", reply)
 
-    return {
-        "session_id": session_id,
-        "reply": reply,
-    }
+        return {
+            "session_id": session_id,
+            "reply": reply,
+        }
+
+    except Exception as e:
+        print(traceback.format_exc())
+
+        return {
+            "session_id": request.session_id,
+            "reply": f"❌ Backend Error: {str(e)}"
+        }
