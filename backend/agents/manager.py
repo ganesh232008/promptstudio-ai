@@ -1,10 +1,10 @@
-from backend.agents.requirement_agent import collect_requirements
-from backend.agents.prompt_generator import generate_prompt
-from backend.agents.reviewer_agent import review_prompt
-from backend.agents.optimizer_agent import optimize_prompt
-from backend.agents.formatter_agent import format_prompt
+from agents.requirement_agent import collect_requirements
+from agents.prompt_generator import generate_prompt
+from agents.reviewer_agent import review_prompt
+from agents.optimizer_agent import optimize_prompt
+from agents.formatter_agent import format_prompt
 
-from backend.chat_memory import (
+from chat_memory import (
     get_stage,
     set_stage,
 )
